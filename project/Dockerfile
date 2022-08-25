@@ -1,11 +1,12 @@
 FROM python:3.10
 
-RUN mkdir -p /usr/src/project/
-WORKDIR /usr/src/project/
+RUN apt-get update -y
+RUN apt-get upgrade -y
 
-COPY . /usr/src/project/
-RUN pip install --no-cache-dir -r requirements.txt
+WORKDIR /app
 
-EXPOSE 8080
+COPY ./requirements.txt ./
+RUN pip install -r requirements.txt
+COPY ./bank ./bank
 
-CMD [ "python", "manage.py", "runserver", "0.0.0.0:8080" ]
+CMD [ "python3", "bank/manage.py", "runserver", "0.0.0.0:8000"]
