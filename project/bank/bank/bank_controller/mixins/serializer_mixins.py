@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
-from bank_controller.services.general_service import get_or_raise_validation_error
-from bank_controller.services.transaction_service import money_rederection
+from bank_controller.services.database_service import get_or_raise_validation_error
+from bank_controller.services.general_bank_service import money_rederection
 from bank_controller.validators import pin_validator, amount_validator
 from bank_controller.models import *
 

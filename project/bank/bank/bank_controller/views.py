@@ -15,16 +15,6 @@ class CreateCashAccountView( CreateAPIView ):
     """
     
     serializer_class = CreateCashAccountSerializer
-
-class ListCashAccountView( ListAPIView ):
-    """
-        View for displaying list cash accounts
-    """
-
-    serializer_class = ListCashAccountSerializer
-
-    def get_queryset(self):
-        return CashAccount.objects.filter( owner = self.request.user )
     
 class RetrieveCashAccountView( RetrieveAPIView ):
     """
@@ -35,16 +25,6 @@ class RetrieveCashAccountView( RetrieveAPIView ):
 
     def get_queryset(self):
         return CashAccount.objects.filter( owner = self.request.user )
-    
-    def get_object(self):
-        # Redefined to get the correct account based on the user who sent the request and the values from the request
-
-        queryset = self.filter_queryset( self.get_queryset() )
-
-        filter_kwargs = { 'account_type' : self.kwargs.get('account_type') }
-        obj = get_object_or_404( queryset, **filter_kwargs )
-
-        return obj
 
 
 # Transfer views
@@ -65,3 +45,12 @@ class CreatePurchaseView( CreateAPIView ):
     """
 
     serializer_class = CreatePurchaseSerializer
+
+# Credit view
+
+class CreateCredirView( CreateAPIView ):
+    """
+        View for create credit
+    """
+
+    serializer_class = CreateCreditSerializer

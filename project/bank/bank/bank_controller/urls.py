@@ -6,9 +6,8 @@ from .views import *
 urlpatterns = [
     # Cash account urls
 
-    path( 'cash-accounts/', ListCashAccountView.as_view(), name = 'cash_account-list' ),
     path( 'cash-accounts/create/', CreateCashAccountView.as_view(), name = 'cash_account-create' ),
-    path( 'cash-accounts/<slug:account_type>/', RetrieveCashAccountView.as_view(), name = 'cash_account-retrieve' ),
+    path( 'cash-accounts/<int:pk>/', RetrieveCashAccountView.as_view(), name = 'cash_account-retrieve' ),
 
     # Transfer urls
 
@@ -17,4 +16,8 @@ urlpatterns = [
     # Purchase urls
 
     path( 'purchase/create/', CreatePurchaseView.as_view(), name = 'purchase-create' ),
+
+    # Credit urls
+
+    path( 'credits/create/', CreateCredirView.as_view(), name = 'credit-create' ),
 ]

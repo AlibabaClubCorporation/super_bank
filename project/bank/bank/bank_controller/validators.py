@@ -1,22 +1,13 @@
 from rest_framework.exceptions import ValidationError
+from django.core.exceptions import ObjectDoesNotExist
 
 from .models import *
 
-def account_type_validator( value, user ):
-    # Checking if the user has this type of cash account
-
-    for cash_account in user.cash_accounts.all():
-        if cash_account.account_type == value:
-            raise ValidationError( detail = f'You already have an account type "{value}"' )
-
-    return value
 
 def from_account_validator( value, user ):
     # Checks if the account belongs to this user
 
-    user_accounts = user.cash_accounts.all()
-
-    if value not in ( user_accounts ):
+    if value != user.cash_account:
         raise ValidationError( detail = 'Enter your account ID' )
     
     return value
@@ -54,3 +45,12 @@ def pin_validator( value, account ):
         raise ValidationError( detail = 'Invalid PIN' )
     
     return value
+
+def no_account_validator( value ):
+    # Checking if a user has an account
+
+    try:
+        value.cash_account
+        raise ValidationError( 'You already have your own account' )
+    except ObjectDoesNotExist:
+        return value
