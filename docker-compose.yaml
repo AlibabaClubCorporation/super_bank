@@ -4,7 +4,7 @@ services:
   redis:
     image: redis
     restart: always
-  
+    
   project:
     restart: always
     build: 
@@ -13,3 +13,9 @@ services:
       - "8000:8000"
     command: [ "python3", "bank/manage.py", "runserver", "0.0.0.0:8000"]
   
+  worker:
+    restart: always
+    build: 
+      context: ./project
+
+    command: ['celery', '--workdir=bank', '-A', 'config', 'worker' ]
