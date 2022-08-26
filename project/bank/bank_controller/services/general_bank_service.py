@@ -24,7 +24,7 @@ def money_rederection( from_account, to_account, amount, user ):
 
     from_account.save()
     to_account.save()
-
+    
 # Message
 
 def create_message( account, content ):
@@ -170,7 +170,6 @@ def checking_payment_part_credit( credit ):
         if not credit.is_increased_percentage:
             credit.is_increased_percentage = True
             credit.save()
-        
             message_content = f'Due to non-payment of the credit, the interest rate was increased for the credit with the identifier "{credit.pk}"'
             create_message( credit.account, message_content )
         else:
@@ -200,11 +199,6 @@ def checking_credits_status():
 
     # Go through all the credit to check
     for credit in credits:
-        # If the loan is paid in full, deletes the record and sends a message
-        if credit_repayment_check( credit ):
-            # Skips other checks if credit has been paid and removed
-            continue
-
         # Calculates the time to make the next payment
         is_increased_percentage = credit.is_increased_percentage
         payment_time_limit = credit.last_payment_date + datetime.timedelta( minutes = 1 + int(is_increased_percentage) )
@@ -213,5 +207,6 @@ def checking_credits_status():
         if payment_time_limit < datetime.datetime.now( tz = datetime.timezone.utc ):
             checking_payment_part_credit(credit)
 
-
+        # If the loan is paid in full, deletes the record and sends a message
+        credit_repayment_check( credit )
 

@@ -15,7 +15,7 @@ urlpatterns = [
 
     # Purchase urls
 
-    path( 'purchase/create/', CreatePurchaseView.as_view(), name = 'purchase-create' ),
+    path( 'purchases/create/', CreatePurchaseView.as_view(), name = 'purchase-create' ),
 
     # Credit urls
 

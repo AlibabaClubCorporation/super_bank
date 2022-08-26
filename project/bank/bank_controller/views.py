@@ -4,7 +4,6 @@ from rest_framework.generics import CreateAPIView, RetrieveAPIView, ListAPIView
 
 from .models import *
 from .serializers import *
-from .tasks import add as func
 
 
 
@@ -26,10 +25,6 @@ class RetrieveCashAccountView( RetrieveAPIView ):
 
     def get_queryset(self):
         return CashAccount.objects.filter( owner = self.request.user )
-
-    def get(self, request, *args, **kwargs):
-        func.delay()
-        return super().get(request, *args, **kwargs)
 
 
 # Transfer views

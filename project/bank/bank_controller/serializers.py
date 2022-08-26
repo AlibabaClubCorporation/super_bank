@@ -129,6 +129,17 @@ class CreatePurchaseSerializer( TransactionsSerializerMixin, serializers.ModelSe
 
         return from_account_validator( value, user )
 
+    def create(self, validated_data):
+        account = validated_data['account']
+        amount = validated_data['amount']
+
+        cash_withdrawal(
+            account = account,
+            amount = amount,
+        )
+
+        return super().create(validated_data)
+
 
 class DisplayPurchaseSerializer( serializers.ModelSerializer ):
     """

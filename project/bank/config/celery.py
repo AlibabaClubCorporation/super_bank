@@ -15,3 +15,13 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 
 # Load task modules from all registered Django apps.
 app.autodiscover_tasks()
+
+
+# Celery beat schedule
+
+app.conf.beat_schedule = {
+    'periodic-check-credit-status': {
+        'task': 'bank_controller.tasks.periodic_check_credit_status',
+        'schedule': 60.0,
+    },
+}

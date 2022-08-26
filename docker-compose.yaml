@@ -4,7 +4,7 @@ services:
   redis:
     image: redis
     restart: always
-    
+
   project:
     restart: always
     build: 
@@ -12,10 +12,24 @@ services:
     ports: 
       - "8000:8000"
     command: [ "python3", "bank/manage.py", "runserver", "0.0.0.0:8000"]
+
+    volumes:
+      - ./project/bank/db:/src/bank/db
   
   worker:
     restart: always
     build: 
       context: ./project
 
+    volumes:
+      - ./project/bank/db:/src/bank/db
+
     command: ['celery', '--workdir=bank', '-A', 'config', 'worker' ]
+
+  celery-beats:
+    restart: always
+    build: 
+      context: ./project
+    volumes: 
+      - ./project/bank/db:/src/bank/db
+    command: ['celery', '--workdir=./bank', '-A', 'config', 'beat', '-l', 'INFO', '--scheduler', 'django_celery_beat.schedulers:DatabaseScheduler']
