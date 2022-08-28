@@ -19,5 +19,6 @@ urlpatterns = [
 
     # Credit urls
 
-    path( 'credits/create/', CreateCredirView.as_view(), name = 'credit-create' ),
+    path( 'credits/create/', CreateCreditView.as_view(), name = 'credit-create' ),
+    path( 'credits/payment/', UpdateAmountReturnedOfCreditView.as_view(), name = 'credit-update-amount-returned' ),
 ]

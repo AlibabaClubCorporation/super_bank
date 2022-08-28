@@ -51,6 +51,35 @@ class CreateCreditSerializer( TransactionsSerializerMixin, serializers.ModelSeri
 
         return instance
 
+class UpdateAmountReturnedOfCreditSerializer( serializers.ModelSerializer ):
+    """
+        Serializer to pay part of the credit
+    """
+
+    amount = serializers.IntegerField()
+
+    class Meta:
+        model = Credit
+        fields = ( 'amount', )
+    
+    def validate_amount(self, value):
+        remaining_amount_to_repay_credit = calc_remaining_amount_to_repay_credit( self.instance )
+
+        if remaining_amount_to_repay_credit < value:
+            raise ValidationError( f"You cannot pay more than what is required to fully repay the loan ( { remaining_amount_to_repay_credit } )" )
+
+        return value
+
+    def update(self, instance, validated_data):
+        payment_part_credit( instance, validated_data['amount'] )
+
+        return instance
+
+    def to_representation(self, instance):
+        if not instance.pk:
+            return { 'credit' : 'Has been paid and removed' }
+        return DisplayCreditSerializer( instance = instance ).data
+
 class DisplayCreditSerializer( serializers.ModelSerializer ):
     """
         Serializer for display credit
@@ -60,6 +89,9 @@ class DisplayCreditSerializer( serializers.ModelSerializer ):
     number_of_parts_left = serializers.SerializerMethodField()
     amount_to_pay_one_part = serializers.SerializerMethodField()
     amount_to_fully_repay = serializers.SerializerMethodField()
+    amount_paid_parts_credit = serializers.SerializerMethodField()
+    payment_time_limit = serializers.SerializerMethodField()
+    time_remaining_until_payment = serializers.SerializerMethodField()
 
     class Meta:
         model = Credit
@@ -77,6 +109,17 @@ class DisplayCreditSerializer( serializers.ModelSerializer ):
 
     def get_amount_to_fully_repay( self, obj ):
         return calc_remaining_amount_to_repay_credit( obj )
+
+    def get_amount_paid_parts_credit( self, obj ):
+        return calc_number_paid_credit_parts( obj )
+
+    def get_payment_time_limit( self, obj ):
+        return calc_payment_time_limit( obj )
+
+    def get_time_remaining_until_payment( self, obj ):
+        time_now = datetime.datetime.now( tz = datetime.timezone.utc )
+
+        return calc_payment_time_limit( obj ) - time_now
 
 # Tranfer serializers
 

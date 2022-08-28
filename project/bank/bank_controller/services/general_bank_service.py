@@ -80,7 +80,6 @@ def payment_part_credit( credit, amount ):
 
     if cash_withdrawal( credit.account, amount ):
         credit.amount_returned += amount
-        credit.last_payment_date = datetime.datetime.now( tz = datetime.timezone.utc )
         credit.save()
 
         Purchase.objects.create(
@@ -88,6 +87,9 @@ def payment_part_credit( credit, amount ):
             amount = amount,
             merchant = f'Credit | PK: {credit.pk}',
         )
+        
+        # If the loan is paid in full, deletes the record and sends a message
+        credit_repayment_check( credit )
 
         return True
 
@@ -135,6 +137,17 @@ def calc_parts_remaining_to_pay_credit( obj ):
 
     return ceil( calc_remaining_amount_to_repay_credit( obj ) / calc_amount_required_to_pay_one_credit_part( obj ) )
 
+def calc_number_paid_credit_parts( obj ):
+    """
+        Return the number of paid installments of the credit
+    """
+
+    return obj.parts - calc_parts_remaining_to_pay_credit( obj )
+
+def calc_payment_time_limit( obj ):
+    amount_paid_parts_credit = calc_number_paid_credit_parts( obj )
+    
+    return obj.creation_date + datetime.timedelta( minutes = amount_paid_parts_credit + int( obj.is_increased_percentage ) + 1 )
 
 def credit_repayment_check( credit ):
     """
@@ -200,13 +213,10 @@ def checking_credits_status():
     # Go through all the credit to check
     for credit in credits:
         # Calculates the time to make the next payment
-        is_increased_percentage = credit.is_increased_percentage
-        payment_time_limit = credit.last_payment_date + datetime.timedelta( minutes = 1 + int(is_increased_percentage) )
+
+        payment_time_limit = calc_payment_time_limit( credit )
 
         # The condition will return True when it is necessary to repay part of the credit
         if payment_time_limit < datetime.datetime.now( tz = datetime.timezone.utc ):
             checking_payment_part_credit(credit)
-
-        # If the loan is paid in full, deletes the record and sends a message
-        credit_repayment_check( credit )
 

@@ -25,6 +25,8 @@ def amount_validator( value, account ):
     
     if value > account.balance:
         raise ValidationError( detail = 'Not enough money on account' )
+    if value < 1:
+        raise ValidationError( detail = "You cannot make a transaction for an amount less than 1" )
     
     return value
 

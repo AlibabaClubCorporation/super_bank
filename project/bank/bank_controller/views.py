@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
-from rest_framework.generics import CreateAPIView, RetrieveAPIView, ListAPIView
+from rest_framework.generics import CreateAPIView, RetrieveAPIView, UpdateAPIView
 
 from .models import *
 from .serializers import *
@@ -48,9 +48,19 @@ class CreatePurchaseView( CreateAPIView ):
 
 # Credit view
 
-class CreateCredirView( CreateAPIView ):
+class CreateCreditView( CreateAPIView ):
     """
         View for create credit
     """
 
     serializer_class = CreateCreditSerializer
+
+class UpdateAmountReturnedOfCreditView( UpdateAPIView ):
+    """
+        View to pay part of the credit
+    """
+
+    serializer_class = UpdateAmountReturnedOfCreditSerializer
+
+    def get_object(self):
+        return get_object_or_404( Credit, account = self.request.user.cash_account )

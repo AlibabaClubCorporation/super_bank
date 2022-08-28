@@ -118,7 +118,7 @@ class Credit( models.Model ):
     """
         Model of credit
 
-        Rules under which the loan works:
+        Rules under which the credit works:
         - 1 user - maximum 1 credit.
         - Once a month (per minute during development/testing) the debtor's account is debited with the amount of credit divided by the number of parts of the loan and multiplied by the percentage of the loan (usually the percentage is equal to the number of parts, but if the "is_increased_percentage" flag is set to "True", then the percentage increased by 1).
         - If you miss a payment once, a message about it comes, and the "is_increased_percentage" flag becomes True for the entire duration of the loan.
@@ -146,7 +146,6 @@ class Credit( models.Model ):
     )
 
     creation_date = models.DateTimeField( auto_now_add = True, )
-    last_payment_date = models.DateTimeField( auto_now_add = True, )
 
     percent = models.PositiveSmallIntegerField(
         default = 1,
