@@ -6,7 +6,13 @@ import sys
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
+
+    # There are several configuration files in this project.
+    # At the moment:
+    # - config.settings.debug_settings
+    # - config.settings.product_settings
+    #       * product_settings requires " path('__debug__/', include('debug_toolbar.urls')) " to be removed from urlspatterns in config.urls
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.debug_settings')
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

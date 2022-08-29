@@ -1,4 +1,3 @@
-from re import L
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
@@ -6,6 +5,7 @@ from .models import *
 from .validators import *
 from .mixins.serializer_mixins import *
 from .services.general_bank_service import *
+from .services.credit_service import *
 
 
 
@@ -18,7 +18,7 @@ class DisplayMessageSerializer( serializers.ModelSerializer ):
 
     class Meta:
         model = Message
-        fields = ( 'content', 'creation_date' )
+        fields = ( 'content', 'creation_date', 'id', )
 
 # Credit serializer
 
@@ -51,7 +51,7 @@ class CreateCreditSerializer( TransactionsSerializerMixin, serializers.ModelSeri
 
         return instance
 
-class UpdateAmountReturnedOfCreditSerializer( serializers.ModelSerializer ):
+class UpdateAmountReturnedOfCreditSerializer( TransactionsSerializerMixin ):
     """
         Serializer to pay part of the credit
     """
@@ -68,16 +68,18 @@ class UpdateAmountReturnedOfCreditSerializer( serializers.ModelSerializer ):
         if remaining_amount_to_repay_credit < value:
             raise ValidationError( f"You cannot pay more than what is required to fully repay the loan ( { remaining_amount_to_repay_credit } )" )
 
-        return value
+        return super().validate_amount( value )
 
     def update(self, instance, validated_data):
         payment_part_credit( instance, validated_data['amount'] )
 
         return instance
 
+    
     def to_representation(self, instance):
         if not instance.pk:
             return { 'credit' : 'Has been paid and removed' }
+
         return DisplayCreditSerializer( instance = instance ).data
 
 class DisplayCreditSerializer( serializers.ModelSerializer ):
@@ -150,7 +152,7 @@ class DisplayTransferSerializer( serializers.ModelSerializer ):
 
     class Meta:
         model = Transfer
-        fields = '__all__'
+        exclude = ( 'is_ignore' )
 
 
 # Purchase serializers
@@ -164,7 +166,7 @@ class CreatePurchaseSerializer( TransactionsSerializerMixin, serializers.ModelSe
     class Meta:
         model = Purchase
         fields = '__all__'
-        read_only_fields = ( 'creation_date', )
+        read_only_fields = ( 'creation_date', 'is_ignore', )
     
 
     def validate_account(self, value):
@@ -191,7 +193,7 @@ class DisplayPurchaseSerializer( serializers.ModelSerializer ):
 
     class Meta:
         model = Purchase
-        fields = '__all__'
+        exclude = ( 'is_ignore', )
 
 
 # Cash account serializers
@@ -228,18 +230,36 @@ class RetrieveCashAccountSerializer( serializers.ModelSerializer ):
 
     history = serializers.SerializerMethodField()
     credit = DisplayCreditSerializer()
-    messages = DisplayMessageSerializer( many = True )
+    messages = serializers.SerializerMethodField()
 
     class Meta:
         model = CashAccount
         fields = ( 'balance', 'is_blocked', 'creation_date', 'pin', 'history', 'credit' , 'messages' )
     
 
+    def get_messages( self, obj ):
+        serializer = DisplayMessageSerializer(
+            data = obj.messages.filter( is_ignore = False ),
+            many = True
+        )
+        serializer.is_valid()
+
+        return serializer.data
+
     def get_history( self, obj ):
         # Receive all transfers and purchases
-        purchases = DisplayPurchaseSerializer( data = obj.purchases.all(), many = True )
-        sent_transfers = DisplayTransferSerializer( data = obj.sent_transfers.all(), many = True )
-        receiver_transfers = DisplayTransferSerializer( data = obj.received_transfers.all(), many = True)
+        purchases = DisplayPurchaseSerializer(
+            data = obj.purchases.filter( is_ignore = False ),
+            many = True
+        )
+        sent_transfers = DisplayTransferSerializer(
+            data = obj.sent_transfers.filter( is_ignore = False ),
+            many = True
+        )
+        receiver_transfers = DisplayTransferSerializer(
+            data = obj.received_transfers.filter( is_ignore = False ),
+            many = True
+        )
 
         purchases.is_valid()
         sent_transfers.is_valid()

@@ -1,5 +1,6 @@
-from .services.general_bank_service import checking_credits_status
 from config.celery import app
+
+from .services.credit_service import checking_credits_status
 
 
 @app.task

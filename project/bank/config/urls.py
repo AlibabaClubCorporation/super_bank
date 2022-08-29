@@ -20,6 +20,9 @@ urlpatterns = [
     path( 'auth/', include( 'djoser.urls' ) ),
     re_path( r'^auth/', include( 'djoser.urls.authtoken' ) ),
 
+    # Delete given path when "product_settings" is enabled in manage.py file
+    path('__debug__/', include('debug_toolbar.urls')),
+
     path('admin/', admin.site.urls),
     path('api/v1.0/', include('bank_controller.urls')),
 ]

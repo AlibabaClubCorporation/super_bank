@@ -116,7 +116,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru'
 
 TIME_ZONE = 'UTC'
 
@@ -147,14 +147,6 @@ REST_FRAMEWORK = {
     ],
 }
 
-# DJOSER = {
-#     'PASSWORD_RESET_CONFIRM_URL' : '',
-#     'USERNAME_RESET_CONFIRM_URL' : '',
-#     'ACTIVATION_URL' : '',
-#     'SEND_ACTIVATION_EMAIL' : False,
-#     'SERIALIZERS' : {}
-# }
-
 INTERNAL_IPS = [
     '127.0.0.1',
 ]
@@ -171,8 +163,3 @@ REDIS_PORT = '6379'
 # # CELERY SETTINGS
 
 CELERY_BROKER_URL = f'redis://{REDIS_SERVICE_NAME}:{REDIS_PORT}'
-# CELERY_BROKER_TRANSPORT_OPTIONS = { 'visibility_timeout' : 3600 }
-# # CELERY_RESULT_BACKEND = f'redis://{REDIS_SERVICE_NAME}:{REDIS_PORT}/0'
-# CELERY_ACCEPT_CONTENT = [ 'application/json' ]
-# CELERY_TASK_SERIALIZER = 'json'
-# CELERY_RESULT_SERIALIZER = 'json'

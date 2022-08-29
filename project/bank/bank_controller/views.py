@@ -1,9 +1,9 @@
 from django.shortcuts import get_object_or_404
-from rest_framework.views import APIView
 from rest_framework.generics import CreateAPIView, RetrieveAPIView, UpdateAPIView
 
 from .models import *
 from .serializers import *
+from .mixins.view_mixins import ClearHistoryMixinView
 
 
 
@@ -23,8 +23,8 @@ class RetrieveCashAccountView( RetrieveAPIView ):
 
     serializer_class = RetrieveCashAccountSerializer
 
-    def get_queryset(self):
-        return CashAccount.objects.filter( owner = self.request.user )
+    def get_object(self):
+        return get_object_or_404( CashAccount, owner = self.request.user )
 
 
 # Transfer views
@@ -36,6 +36,12 @@ class CreateTransferView( CreateAPIView ):
 
     serializer_class = CreateTransferSerializer
 
+class ClearTransferHistoryView( ClearHistoryMixinView ):
+    """
+        View for clear transfers history
+    """
+
+    model = Transfer
 
 # Purchase views
 
@@ -45,6 +51,13 @@ class CreatePurchaseView( CreateAPIView ):
     """
 
     serializer_class = CreatePurchaseSerializer
+
+class ClearPurchaseHistoryView( ClearHistoryMixinView ):
+    """
+        View for clear purchases history
+    """
+
+    model = Purchase
 
 # Credit view
 
@@ -64,3 +77,12 @@ class UpdateAmountReturnedOfCreditView( UpdateAPIView ):
 
     def get_object(self):
         return get_object_or_404( Credit, account = self.request.user.cash_account )
+
+# Message view
+
+class ClearMessageHistoryView( ClearHistoryMixinView ):
+    """
+        View for clear messages history
+    """
+
+    model = Message

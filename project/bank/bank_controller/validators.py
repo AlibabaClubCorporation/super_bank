@@ -56,3 +56,24 @@ def no_account_validator( value ):
         raise ValidationError( 'You already have your own account' )
     except ObjectDoesNotExist:
         return value
+
+def id_list_validate( id_list ):
+    error_message = None
+
+    # Checking for a list type for id_list
+
+    if type( id_list ) != list:
+        error_message = "The 'id_list' parameter must be a list"
+
+    # Checks each list value for a integer type
+
+    for id in id_list:
+        if type( id ) != int:
+            error_message = 'One of the values in the passed list is not numeric and is not suitable for use as an identifier'
+    
+    # Returns True if the check succeeded, False if the check failed.
+
+    if error_message:
+        return False, error_message
+    
+    return True, error_message

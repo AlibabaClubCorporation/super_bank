@@ -10,12 +10,12 @@ class CustomUser( AbstractUser ):
     """
 
     REQUIRED_FIELDS = [
-        # 'first_name',
-        # 'last_name',
-        # 'gender',
-        # 'birth_date',
-        # 'city',
-        # 'adress',
+        'first_name',
+        'last_name',
+        'gender',
+        'birth_date',
+        'city',
+        'adress',
         'email',
     ]
 
@@ -90,6 +90,8 @@ class Transfer( models.Model ):
 
     creation_date = models.DateTimeField( auto_now_add = True, )
 
+    is_ignore = models.BooleanField( default = False, )
+
 
 class Purchase( models.Model ):
     """
@@ -112,6 +114,8 @@ class Purchase( models.Model ):
     )
 
     creation_date = models.DateTimeField( auto_now_add = True, )
+
+    is_ignore = models.BooleanField( default = False, )
 
 
 class Credit( models.Model ):
@@ -180,3 +184,5 @@ class Message( models.Model ):
     )
 
     creation_date = models.DateTimeField( auto_now_add = True, )
+
+    is_ignore = models.BooleanField( default = False, )
