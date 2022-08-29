@@ -6,6 +6,7 @@ The project of emulation of the main banking tasks:
 - Ability to see messages on behalf of the bank, during actions for example (withdrawing money from the account for part of the loan)
 - Ability to view / clear the history of payments, transfers and messages
 
+----------------------------------------------------------------------------------------------------------------------------
 
 * This project uses Docker, Celery and Celery-beat.
 - You must use "docker-compose up --build" to run it, or "docker-compose up" if the image has already been built.
