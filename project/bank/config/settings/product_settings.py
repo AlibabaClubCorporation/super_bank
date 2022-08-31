@@ -2,6 +2,8 @@ from .debug_settings import *
 
 
 
+DEBUG = False
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -20,12 +22,13 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = 'en-us'
 
 DATABASES = {
+
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db' / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'db',
+        'USER': 'postgres_user',
+        'PASSWORD': '1324354657687980',
+        'HOST': 'postgres',
+        'PORT': 5432,
     }
 }
-
-INSTALLED_APPS.pop( INSTALLED_APPS.index( 'debug_toolbar' ) )
-
-MIDDLEWARE.pop( MIDDLEWARE.index( 'debug_toolbar.middleware.DebugToolbarMiddleware' ) )

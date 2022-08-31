@@ -5,16 +5,31 @@ services:
     image: redis
     restart: always
 
+  postgres:
+    image: postgres
+    volumes:
+      - ./project/bank/db:/src/bank/db
+    environment:
+      - POSTGRES_DB=db
+      - POSTGRES_USER=postgres_user
+      - POSTGRES_PASSWORD=1324354657687980
+    
+    ports:
+      - 54321:5432
+
   project:
     restart: always
-    build: 
+    build:
       context: ./project
     ports: 
       - "8000:8000"
     command: [ "python3", "bank/manage.py", "runserver", "0.0.0.0:8000"]
+    depends_on:
+      - postgres
+      - redis
 
     volumes:
-      - ./project/bank/test_db:/src/bank/test_db
+      - ./project/bank/db:/src/bank/db
   
   worker:
     restart: always
@@ -22,7 +37,10 @@ services:
       context: ./project
 
     volumes:
-      - ./project/bank/test_db:/src/bank/test_db
+      - ./project/bank/db:/src/bank/db
+
+    depends_on:
+      - project
 
     command: ['celery', '--workdir=bank', '-A', 'config', 'worker' ]
 
@@ -30,6 +48,11 @@ services:
     restart: always
     build: 
       context: ./project
+
     volumes: 
-      - ./project/bank/test_db:/src/bank/test_db
+      - ./project/bank/db:/src/bank/db
+
+    depends_on:
+      - worker
+
     command: ['celery', '--workdir=./bank', '-A', 'config', 'beat', '-l', 'INFO', '--scheduler', 'django_celery_beat.schedulers:DatabaseScheduler']

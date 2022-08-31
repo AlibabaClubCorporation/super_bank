@@ -13,5 +13,5 @@ The project of emulation of the main banking tasks:
 
 * All dependencies are listed in project/requirements.txt .
 
-* Before starting the project, pay attention to the manage.py file
+* Before starting the project, pay attention to the ( manage.py | config/celery.py ) file
 - There you need to specify the configuration file to use ( default configuration file for debug mode )

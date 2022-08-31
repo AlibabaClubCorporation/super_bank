@@ -11,16 +11,17 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+import decouple
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-&&*-se!m-b(n!=j@7g*r!uwona&)i2n3xm554znl%j9n^cfqph'
+SECRET_KEY = decouple.config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -46,7 +47,6 @@ INSTALLED_APPS = [
     # Libraries
     'djoser',
     'django_celery_beat',
-    'debug_toolbar',
 ]
 
 MIDDLEWARE = [
@@ -57,9 +57,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
-    # Libraries
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -89,7 +86,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db' / 'db.sqlite3',
+        'NAME': BASE_DIR / 'test_db' / 'db.sqlite3',
     }
 }
 
@@ -147,10 +144,6 @@ REST_FRAMEWORK = {
     ],
 }
 
-INTERNAL_IPS = [
-    '127.0.0.1',
-]
-
 # User model
 AUTH_USER_MODEL = 'bank_controller.CustomUser'
 
@@ -163,3 +156,4 @@ REDIS_PORT = '6379'
 # # CELERY SETTINGS
 
 CELERY_BROKER_URL = f'redis://{REDIS_SERVICE_NAME}:{REDIS_PORT}'
+CELERY_RESULT_BACKEND = CELERY_BROKER_URL

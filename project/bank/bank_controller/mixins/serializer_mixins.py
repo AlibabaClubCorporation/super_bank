@@ -55,7 +55,6 @@ class TransactionsSerializerMixin( serializers.Serializer ):
 
         return super().validate(attrs)
 
-    
     def create(self, validated_data):
         from_account = validated_data['from_account']
         to_account = validated_data['to_account']
