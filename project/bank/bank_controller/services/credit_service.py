@@ -59,10 +59,7 @@ def calc_credit_amount_with_percent( obj ):
     """
 
     amount = obj.amount
-    if obj.is_increased_percentage:
-        percent = obj.percent + 1
-    else:
-        percent = obj.percent
+    percent = obj.percent + int( obj.is_increased_percentage )
 
     return amount + ( amount / 100 ) * percent
 

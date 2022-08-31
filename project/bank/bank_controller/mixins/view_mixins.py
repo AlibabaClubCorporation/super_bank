@@ -46,7 +46,7 @@ class ClearHistoryMixinView( APIView ):
             error_message = 'A value was specified in the "model" class attribute that did not have the "is_ignore" attribute. You must specify a Django model object with an "is_ignore" field to work correctly'
             raise AttributeError( error_message )
 
-        
+
         return super().as_view( **initkwargs )
 
 
